@@ -20,21 +20,16 @@ Shows how to calculate some seasonal patterns in markets using PyThalesians (Sea
 """
 
 # loading data
+import datetime
+
+from chartesians.graphs.plotfactory import PlotFactory
+
+from pythalesians.economics.seasonality.seasonality import Seasonality
 from pythalesians.market.loaders.lighttimeseriesfactory import LightTimeSeriesFactory
 from pythalesians.market.requests.timeseriesrequest import TimeSeriesRequest
-
-# process data
-from pythalesians.economics.seasonality.seasonality import Seasonality
 from pythalesians.timeseries.calcs.timeseriescalcs import TimeSeriesCalcs
-
-# displaying data
-from pythalesians.graphics.graphs.plotfactory import PlotFactory
-from pythalesians.graphics.graphs.graphproperties import GraphProperties
-
-# logging
 from pythalesians.util.loggermanager import LoggerManager
-
-import datetime
+from chartesians.graphs.graphproperties import GraphProperties
 
 seasonality = Seasonality()
 tsc = TimeSeriesCalcs()
@@ -44,7 +39,37 @@ pf = PlotFactory()
 
 # just change "False" to "True" to run any of the below examples
 
-###### calculate seasonal moves in EUR/USD and GBP/USD (using Quandl data)
+###### calculate seasonal moves in SPX (using Quandl data)
+if True:
+    time_series_request = TimeSeriesRequest(
+                start_date = "01 Jan 1970",                     # start date
+                finish_date = datetime.date.today(),            # finish date
+                freq = 'daily',                                 # daily data
+                data_source = 'bloomberg',                         # use Quandl as data source
+                tickers = ['S&P500'],
+                fields = ['close'],                                 # which fields to download
+                vendor_tickers = ['SPX Index'],  # ticker (Quandl)
+                vendor_fields = ['PX_LAST'],                          # which Bloomberg fields to download
+                cache_algo = 'internet_load_return')                # how to return data
+
+    ltsf = LightTimeSeriesFactory()
+
+    df = ltsf.harvest_time_series(time_series_request)
+
+    df_ret = tsc.calculate_returns(df)
+
+    day_of_month_seasonality = seasonality.bus_day_of_month_seasonality(df_ret, partition_by_month = False)
+    day_of_month_seasonality = tsc.convert_month_day_to_date_time(day_of_month_seasonality)
+
+    gp = GraphProperties()
+    gp.date_formatter = '%b'
+    gp.title = 'S&P500 seasonality'
+    gp.scale_factor = 3
+    gp.file_output = "output_data/S&P500 DOM seasonality.png"
+
+    pf.plot_line_graph(day_of_month_seasonality, adapter='pythalesians', gp = gp)
+
+###### calculate seasonal moves in EUR/USD (using Quandl data)
 if True:
     time_series_request = TimeSeriesRequest(
                 start_date = "01 Jan 1970",                     # start date
@@ -76,7 +101,7 @@ if True:
     pf.plot_line_graph(day_of_month_seasonality, adapter='pythalesians', gp = gp)
 
 ###### calculate seasonal moves in FX vol (using Bloomberg data)
-if True:
+if False:
     tickers = [ 'EURUSD',                                       # ticker (Thalesians)
                 'GBPUSD',
                 'USDJPY']
@@ -106,5 +131,38 @@ if True:
     gp.title = 'FX vols moves by day of month'
     gp.scale_factor = 3
     gp.file_output = "output_data/FX vol DOM seasonality.png"
+
+    pf.plot_line_graph(day_of_month_seasonality, adapter='pythalesians', gp = gp)
+
+###### calculate seasonal moves in stocks
+if True:
+    tickers = [ 'S&P500' ]
+    vendor_tickers = ['SPX Index']
+
+    time_series_request = TimeSeriesRequest(
+                start_date = "01 Jan 1996",                     # start date
+                finish_date = datetime.date.today(),            # finish date
+                freq = 'daily',                                 # daily data
+                data_source = 'bloomberg',                      # use bloomberg as data source
+                tickers = tickers,
+                fields = ['close'],                                 # which fields to download
+                vendor_tickers = vendor_tickers,  # ticker (Bloomberg)
+                vendor_fields = ['PX_LAST'],                    # which Bloomberg fields to download
+                cache_algo = 'internet_load_return')                # how to return data
+
+    ltsf = LightTimeSeriesFactory()
+
+    df = ltsf.harvest_time_series(time_series_request)
+
+    df_ret = tsc.calculate_returns(df)
+
+    day_of_month_seasonality = seasonality.bus_day_of_month_seasonality(df_ret, partition_by_month = False)
+    day_of_month_seasonality = tsc.convert_month_day_to_date_time(day_of_month_seasonality)
+
+    gp = GraphProperties()
+    gp.date_formatter = '%b'
+    gp.title = 'Equities moves by day of month (past 20Y)'
+    gp.scale_factor = 1
+    gp.file_output = "output_data/equity_moves.png"
 
     pf.plot_line_graph(day_of_month_seasonality, adapter='pythalesians', gp = gp)

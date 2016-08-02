@@ -38,8 +38,8 @@ if True:
     from pythalesians.timeseries.techind.techparams import TechParams
 
     # for plotting
-    from pythalesians.graphics.graphs.graphproperties import GraphProperties
-    from pythalesians.graphics.graphs.plotfactory import PlotFactory
+    from chartesians.graphs.graphproperties import GraphProperties
+    from chartesians.graphs import PlotFactory
 
     logger = LoggerManager().getLogger(__name__)
 
@@ -136,8 +136,8 @@ if True:
     from pythalesians.timeseries.techind.techparams import TechParams
 
     # for plotting
-    from pythalesians.graphics.graphs.graphproperties import GraphProperties
-    from pythalesians.graphics.graphs.plotfactory import PlotFactory
+    from chartesians.graphs.graphproperties import GraphProperties
+    from chartesians.graphs import PlotFactory
 
     logger = LoggerManager().getLogger(__name__)
 

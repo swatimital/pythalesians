@@ -18,7 +18,12 @@ Class for reading in data from Quandl into PyThalesians library
 
 """
 
-import Quandl
+# support Quandl 3.x.x
+try:
+    import quandl as Quandl
+except:
+    # if import fails use Quandl 2.x.x
+    import Quandl
 
 from pythalesians.util.loggermanager import LoggerManager
 from pythalesians.market.loaders.lowlevel.loadertemplate import LoaderTemplate
@@ -46,11 +51,15 @@ class LoaderQuandl(LoaderTemplate):
 
         if data_frame is not None:
             # tidy up tickers into a format that is more easily translatable
-            returned_tickers = [x.replace(' - Value', '') for x in returned_tickers]
-            returned_tickers = [x.replace(' - VALUE', '') for x in returned_tickers]
-            returned_tickers = [x.replace('.', '/') for x in returned_tickers]
+            # we can often get multiple fields returned (even if we don't ask for them!)
+            # convert to lower case
+            returned_fields = [(x.split(' - ')[1]).lower().replace(' ', '-') for x in returned_tickers]
+            returned_fields = [x.replace('value', 'close') for x in returned_fields]    # special case for close
 
-            fields = self.translate_from_vendor_field(['close' for x in returned_tickers], time_series_request)
+            returned_tickers = [x.replace('.', '/') for x in returned_tickers]
+            returned_tickers = [x.split(' - ')[0] for x in returned_tickers]
+
+            fields = self.translate_from_vendor_field(returned_fields, time_series_request)
             tickers = self.translate_from_vendor_ticker(returned_tickers, time_series_request)
 
             ticker_combined = []

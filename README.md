@@ -8,7 +8,8 @@ At present the PyThalesians offers:
 * Backtesting of systematic trading strategies for cash markets (including cross sectional style trading strategies)
 * Sensitivity analysis for systematic trading strategies parameters
 * Seamless historic data downloading from Bloomberg (requires licence), Yahoo, Quandl, Dukascopy and other market data sources
-* Produces beautiful line plots with PyThalesians wrapper (via Matplotlib), Plotly (via cufflinks) and a simple wrapper for Bokeh
+* Produces beautiful line plots with Chartesians wrapper (via Matplotlib), Plotly (via cufflinks) and a simple wrapper for Bokeh
+* Planning to spin out Chartesians into a different library
 * Analyse seasonality analysis of markets
 * Calculates some technical indicators and gives trading signals based on these
 * Helper functions built on top of Pandas
@@ -17,6 +18,13 @@ At present the PyThalesians offers:
 * Please bear in mind at present PyThalesians is currently a highly experimental alpha project and isn't yet fully 
 documented
 * Uses Apache 2.0 licence
+
+# Chartesians
+
+The Chartesians graphics engine, provides easy to use wrappers for doing simple plots with multiple backend chart libraries
+such as Matplotlib, Plotly (via cufflinks) and Bokeh, without having to learn all the different APIs. We are planning to
+spinout Chartesians into a separate project over time. The PyThalesians project uses the graphics capabilities
+of Chartesians extensively.
 
 # Gallery
 
@@ -88,7 +96,8 @@ generated total return index) (you can run this analysis using indicesfx_example
 
 PyThalesians has been tested on Windows 8 & 10, running Bloomberg Terminal software. 
 I currently run PyThalesians using Anaconda 2.5 (Python 3.5 64bit) on Windows 10. Potentially, it could also work on the 
-Bloomberg Server API (but I have not explicitly tested this). I have also tried running it on Ubuntu and Mac OS X (excluding Bloomberg API)
+Bloomberg Server API (but I have not explicitly tested this). I have also tried running it on Ubuntu and Mac OS X (excluding Bloomberg API). If you
+do not have a subscription to Bloomberg, PyThalesians can still access free data sources including Quandl.
 
 Major requirements
 * Required: Python 3.4, 3.5
@@ -109,7 +118,7 @@ Major requirements
     * For Python 3.4 - prebuilt executable can be run, which means we can skip the build steps above
         * Might need to tweak registry to avoid "Python 3.4 not found in registry error" (blppython.reg example) when using this executable 
     * Alternatively to access Bloomberg, the software also supports the old COM API (but I'm going to remove it because very slow)
-* Recommended: Plotly for funky interactive plots (https://github.com/plotly/python-api) and 
+* Recommended: Plotly for funky interactive plots (https://github.com/plotly/plotly.py) and 
 * Recommended: Cufflinks a nice Plotly
 wrapper when using Pandas dataframes (Jorge Santos project now supports Python 3 
 https://github.com/jorgesantos/cufflinks - so I recommend using that rather than my fork)
@@ -120,7 +129,7 @@ https://github.com/jorgesantos/cufflinks - so I recommend using that rather than
 # Installation
 
 Once installed please make sure you edit pythalesians.util.constants file for the following variables:
-* Change the root path variable - this will ensure that the logging (and a number of other features works correctly). 
+* PyThalesians should autodetect its own path, but if not, manually change root_pythalesians_folder variable - this will ensure that the logging (and a number of other features works correctly). 
 Failure to do so will result in the project not starting
 * Change the default Bloomberg settings (Which API to use? What server address to use?)
 * Write in API keys for Quandl, Twitter, Plotly etc.
@@ -146,18 +155,23 @@ on systematic trading and also consult in the area. One of our clients is RavenP
 
 # Major contributors to PyThalesians
 
-* Saeed Amen - Saeed is managing director and co-founder of the Thalesians. He has a decade of experience creating and successfully running systematic trading models at Lehman Brothers and Nomura. Independently, he runs a systematic trading model with proprietary capital. He is the author of Trading Thalesians – What the ancient world can teach us about trading today (Palgrave Macmillan). He graduated with a first class honours master’s degree from Imperial College in Mathematics and Computer Science. 
+* Saeed Amen - Saeed is the founder of Cuemacro (http://www.cuemacro.com), which deciphers how traders can use both existing and novel data sources
+to better understand macro markets. He is also managing director and co-founder of the Thalesians. 
+He has a decade of experience creating and successfully running systematic trading models at Lehman Brothers and Nomura. 
+Independently, he runs a systematic trading model with proprietary capital. He is the author of Trading Thalesians – What the ancient world can teach us about trading today (Palgrave Macmillan). 
+He graduated with a first class honours master’s degree from Imperial College in Mathematics and Computer Science. 
 
 # Supporting PyThalesians project
 
 If you find PyThalesians useful (and in particular if you are commercial company) please consider supporting the project
-through sponsorship or by using our consultancy/research services in systematic trading. If you would like to contribute to the project, also let me know: it's a big task to try to build up this library on my own!
+through sponsorship or by using Saeed's consultancy/research services in systematic trading. If you would like to contribute to the project, also let me know: it's a big task to try to build up this library on my own!
 
 For the UK election Plot.ly code - please visit https://github.com/plotly/IPython-plotly/tree/master/notebooks/ukelectionbbg
 
 # Future Plans for PyThalesians
 
 We plan to add the following features:
+* Spin out Chartesians into different project
 * Have a proper setup mechanism (eg. via pip), at present needs (partial) manual deployment
 * Add Plotly & Seaborn wrappers for plotting (partially there)
 * Improve support for Bokeh plotting (partially)
@@ -183,6 +197,22 @@ More generally, we want to:
 
 # Coding log
 
+* 01 Aug 2016 - Renamed pythalesians_graphics as chartesians (preparing eventual spinout)
+* 29 Jul 2016 - Created Jupyter notebook plot_market_data for plotting with multiple libraries, also fixed Bokeh sizing issue,
+refactored library, spinning out chart functionality into pythalesians_graphics
+* 28 Jul 2016 - Fixed issue with multiple fields returned by Quandl, added Quandl downloading example
+* 26 Jul 2016 - Added more support for Plotly charts, added surface vol Plotly example
+* 21 Jul 2016 - Refactor StrategyTemplate graph plotting functions
+* 20 Jul 2016 - Return of figure handle for AdapterPyThalesians
+* 08 Jun 2016 - Fix kurtosis issue, refactored vol scaling in CashBasktest, added resample wrapper in TimeSeriesFilter
+* 03 Jun 2016 - Speed up CashBacktest (construct_strategy method)  
+* 02 Jun 2016 - Fixed missing StrategyTemplate file in installation, added auto-detection of path 
+to simplify installation and added methods for converting between pandas and bcolz
+* 31 May 2016 - Got rid of deprecated Pandas methods in TechIndicator
+* 27 May 2016 - Added ability to plot strategy signal at point in time
+* 19 May 2016 - Updated Quandl wrapper to use new Quandl API
+* 02 May 2016 - Tidied up BacktestRequest, added SPX seasonality example
+* 28 Apr 2016 - Updated cashbacktest (for Pandas 0.18)
 * 21 Apr 2016 - Got rid of deprecated Pandas methods in EventStudy
 * 18 Apr 2016 - Fixed some incompatibility issues with Pandas 0.18
 * 06 Apr 2016 - Added more trade statistics output
@@ -214,7 +244,7 @@ More generally, we want to:
 * 28 Oct 2015 - Added more sensitivity analysis for trading strategies
 * 26 Oct 2015 - Various bug fixes for Bloomberg Open API downloader
 * 14 Oct 2015 - Added capability to do parallel downloading of market data (thread/multiprocessing library), with an 
-example for benhcmarking and bug fixes for Bloomberg downloader
+example for benchmarking and bug fixes for Bloomberg downloader
 * 25 Sep 2015 - Refactored examples into different folders / more seasonality examples
 * 19 Sep 2015 - Added support for Plotly choropleth map plots & easy downloading of economic data via FRED/Bloomberg/Quandl
 * 12 Sep 2015 - Added basic support for PyFolio for statistical analysis of strategies
